@@ -48,6 +48,7 @@ func main() {
 	cmds.register("users", handlerListUsers)
 	cmds.register("agg", handlerAgg)
 	cmds.register("addfeed", handlerAddFeed)
+	cmds.register("feeds", handlerListFeeds)
 	// Check for correct cli usage
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
