@@ -2,13 +2,17 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
-	"fmt"
 	"html"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
+
+	"github.com/Ravinder2102/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -90,8 +94,37 @@ func scrapeFeeds(s *state) {
 		log.Printf("couldn't fetch feed %s: %v", feed_to_fetch.Name, err)
 	}
 
+	// save feed to posts
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Printf("Found post: %s\n", item.Title)
+		pubAt := sql.NullTime{}
+		t, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err == nil {
+			pubAt = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
+		}
+		postParams := database.CreatePostParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Title:     item.Title,
+			Url:       item.Link,
+			Description: sql.NullString{
+				String: item.Description,
+				Valid:  true,
+			},
+			PublishedAt: pubAt,
+			FeedID:      feed_to_fetch.ID,
+		}
+		_, err = s.db.CreatePost(context.Background(), postParams)
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("couldn't save post: %v", err)
+			continue
+		}
 	}
 	log.Printf("Feed %s collected, %v posts found", feed_to_fetch.Name, len(rssFeed.Channel.Item))
 }
