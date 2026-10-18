@@ -1,15 +1,13 @@
-# GATOR
+# Gator
 
-A command-line RSS feed aggregator written in Go. Gator collects osts from RSS feeds across the internet, stores them in a PostgreSQL database, and lets you read posts in your terminal.
-
-
+A command-line RSS feed aggregator written in Go. Gator collects posts from RSS feeds across the internet, stores them in a PostgreSQL database, and lets you read posts in your terminal.
 
 ## Features
 
 - Add RSS feeds from the internet
 - Collect and store posts in a PostgreSQL database
 - Follow and unfollow feeds that other users have added
-- Browse post in the terminal, with a link to the full post
+- Browse posts in the terminal, with a link to the full post
 - Multiple users, each with their own followed feeds
 
 ## Prerequisites
@@ -17,7 +15,6 @@ A command-line RSS feed aggregator written in Go. Gator collects osts from RSS f
 - [Go](https://go.dev/dl/) 1.22 or later
 - [PostgreSQL](https://www.postgresql.org/download/) 15 or later
 - [goose](https://github.com/pressly/goose) for database migrations:
-
 
 ```bash
 go install github.com/pressly/goose/v3/cmd/goose@latest
@@ -41,7 +38,7 @@ psql -U postgres -c "CREATE DATABASE gator;"
  
 ### 2. Run the migrations
  
-From the root of the cloned repository:
+Clone the repository and run the migrations:
  
 ```bash
 git clone https://github.com/Ravinder2102/gator.git
@@ -80,52 +77,52 @@ gator browse 5
 ## Commands
 
 ### login
-```bash 
+```bash
 gator login <username>
 ```
-Switch the current user
+Switch the current user.
 
 ### register
-```bash 
+```bash
 gator register <username>
 ```
-Create a new user and log in as them
+Create a new user and log in as them.
 
 ### users
 ```bash
 gator users
 ```
-List all users
+List all users.
 
 ### agg
-```bash 
+```bash
 gator agg <timeBetweenRequests>
 ```
-Fetch and save posts from all feeds on an interval (e.g. 30s, 1m, 1h)
+Fetch and save posts from all feeds on an interval (e.g. 30s, 1m, 1h).
 
 ### addfeed
-```bash 
+```bash
 gator addfeed <feedName> <url>
 ```
 Add a feed and follow it.
 
 ### feeds
-```bash 
+```bash
 gator feeds
 ```
-List all feeds in the database
+List all feeds in the database.
 
 ### follow
 ```bash 
 gator follow <url>
 ```
-Follow an existing feed as the current user
+Follow an existing feed as the current user.
 
 ### following
 ```bash
 gator following
 ```
-List the feeds the current user follows
+List the feeds the current user follows.
 
 ### unfollow
 ```bash
@@ -137,12 +134,12 @@ Unfollow a feed as the current user.
 ```bash 
 gator browse [limit]
 ```
-Show the most recent posts from followed feeds (default limit: 2)
+Show the most recent posts from followed feeds (default limit: 2).
 
 ### reset
 ```bash 
 gator reset
 ```
-Delete all data from the database
+Delete all data from the database.
 
 **Warning:** `gator reset` permanently deletes all users, feeds, and posts. Use it only in development.
