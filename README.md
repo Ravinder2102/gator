@@ -144,4 +144,5 @@ Show the most recent posts from followed feeds (default limit: 2)
 gator reset
 ```
 Delete all data from the database
+
 **Warning:** `gator reset` permanently deletes all users, feeds, and posts. Use it only in development.
