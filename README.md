@@ -1,106 +1,147 @@
 # GATOR
 
-## Description
-
-RSS feed aggregator
-
-Add RSS feeds from across the internet to be collected
-
-Store the collected posts in a PostgreSQL database
-
-Follow and unfollow RSS feeds that other users have added
-
-View summaries of the aggregated posts in the terminal, with a link to the full post
+A command-line RSS feed aggregator written in Go. Gator collects osts from RSS feeds across the internet, stores them in a PostgreSQL database, and lets you read posts in your terminal.
 
 
-## Installation 
 
-### Prerequisites
-You need to have Postgres and Go installed to run gator
+## Features
 
-To install gator use this in your terminal
+- Add RSS feeds from the internet
+- Collect and store posts in a PostgreSQL database
+- Follow and unfollow feeds that other users have added
+- Browse post in the terminal, with a link to the full post
+- Multiple users, each with their own followed feeds
+
+## Prerequisites
+
+- [Go](https://go.dev/dl/) 1.22 or later
+- [PostgreSQL](https://www.postgresql.org/download/) 15 or later
+- [goose](https://github.com/pressly/goose) for database migrations:
+
+
+```bash
+go install github.com/pressly/goose/v3/cmd/goose@latest
+```
+
+## Installation
+
+Install gator with:
+ 
 ```bash
 go install github.com/Ravinder2102/gator@latest
 ```
-Make a `~/.gatorconfig.json` file in your home directory
-inside the config file add these contents
+
+## Setup
+
+### 1. Create the database
+ 
+```bash
+psql -U postgres -c "CREATE DATABASE gator;"
+```
+ 
+### 2. Run the migrations
+ 
+From the root of the cloned repository:
+ 
+```bash
+git clone https://github.com/Ravinder2102/gator.git
+cd gator
+goose -dir sql/schema postgres "postgres://postgres:YOUR_PASSWORD@localhost:5432/gator?sslmode=disable" up
+```
+
+### 3. Create the config file
+ 
+Create a file named `.gatorconfig.json` in your home directory (`~/.gatorconfig.json`):
+ 
 ```json
 {
-  "db_url": "postgres://user:password@localhost:5432/database?sslmode=disable",
-  "current_user_name": "username"
+  "db_url": "postgres://postgres:YOUR_PASSWORD@localhost:5432/gator?sslmode=disable"
 }
 ```
-Replace `user` with `postgres` and `password` with your Postgres password
+ 
+Replace `postgres` with your Postgres username if it differs, and `YOUR_PASSWORD` with your Postgres password. The `current_user_name` field is added automatically when you run `gator register` or `gator login`.
 
-## Usage
+## Quick Start
+ 
+```bash
+# Create your user (this also logs you in)
+gator register alice
+ 
+# Add a feed
+gator addfeed "Boot.dev Blog" https://blog.boot.dev/index.xml
+ 
+# In a second terminal, start collecting posts every minute
+gator agg 1m
+ 
+# Back in the first terminal, read the latest posts
+gator browse 5
+```
 
-Some of the commands you can use with gator are:
+## Commands
 
 ### login
 ```bash 
 gator login <username>
 ```
-Sets the current user in the config.
+Switch the current user
 
 ### register
 ```bash 
 gator register <username>
 ```
-Adds a new user to the database.
-
-### reset
-```bash 
-gator reset
-```
-**Warning:** `gator reset` deletes all database data.
-Reset the database.
+Create a new user and log in as them
 
 ### users
 ```bash
 gator users
 ```
-Lists all the users in the database.
+List all users
 
 ### agg
 ```bash 
 gator agg <timeBetweenRequests>
 ```
-Aggregate and save posts from all feeds fetching on intervals specified by you.
+Fetch and save posts from all feeds on an interval (e.g. 30s, 1m, 1h)
 
 ### addfeed
 ```bash 
 gator addfeed <feedName> <url>
 ```
-Add feed to feeds database.
+Add a feed and follow it.
 
 ### feeds
 ```bash 
 gator feeds
 ```
-Lists all feeds in the feeds database.
+List all feeds in the database
 
 ### follow
 ```bash 
 gator follow <url>
 ```
-Follow a feed for the current user.
+Follow an existing feed as the current user
 
 ### following
 ```bash
 gator following
 ```
-Lists all the feeds being followed by current user.
+List the feeds the current user follows
 
 ### unfollow
 ```bash
 gator unfollow <url>
 ```
-Unfollow feed for current user.
+Unfollow a feed as the current user.
 
 ### browse
 ```bash 
 gator browse [limit]
 ```
-List all the posts fetched for the feeds being followed by the current user in most recent order.
-Specify limit to see a limited number of posts. 
-If no limit is specified, the default limit is 2.
+Show the most recent posts from followed feeds (default limit: 2)
+
+### reset
+```bash 
+gator reset
+```
+Delete all data from the database
+**Warning:** `gator reset` permanently deletes all users, feeds, and posts. Use it only in development.
