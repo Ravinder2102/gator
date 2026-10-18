@@ -23,7 +23,7 @@ go install github.com/pressly/goose/v3/cmd/goose@latest
 ## Installation
 
 Install gator with:
- 
+
 ```bash
 go install github.com/Ravinder2102/gator@latest
 ```
@@ -31,15 +31,15 @@ go install github.com/Ravinder2102/gator@latest
 ## Setup
 
 ### 1. Create the database
- 
+
 ```bash
 psql -U postgres -c "CREATE DATABASE gator;"
 ```
- 
+
 ### 2. Run the migrations
- 
+
 Clone the repository and run the migrations:
- 
+
 ```bash
 git clone https://github.com/Ravinder2102/gator.git
 cd gator
@@ -47,29 +47,29 @@ goose -dir sql/schema postgres "postgres://postgres:YOUR_PASSWORD@localhost:5432
 ```
 
 ### 3. Create the config file
- 
+
 Create a file named `.gatorconfig.json` in your home directory (`~/.gatorconfig.json`):
- 
+
 ```json
 {
   "db_url": "postgres://postgres:YOUR_PASSWORD@localhost:5432/gator?sslmode=disable"
 }
 ```
- 
+
 Replace `postgres` with your Postgres username if it differs, and `YOUR_PASSWORD` with your Postgres password. The `current_user_name` field is added automatically when you run `gator register` or `gator login`.
 
 ## Quick Start
- 
+
 ```bash
 # Create your user (this also logs you in)
 gator register alice
- 
+
 # Add a feed
 gator addfeed "Boot.dev Blog" https://blog.boot.dev/index.xml
- 
+
 # In a second terminal, start collecting posts every minute
 gator agg 1m
- 
+
 # Back in the first terminal, read the latest posts
 gator browse 5
 ```
@@ -98,7 +98,7 @@ List all users.
 ```bash
 gator agg <timeBetweenRequests>
 ```
-Fetch and save posts from all feeds on an interval (e.g. 30s, 1m, 1h).
+Fetch and save posts from all feeds on an interval (e.g. 30s, 1m, 1h). Runs until stopped with `Ctrl+C`.
 
 ### addfeed
 ```bash
@@ -113,7 +113,7 @@ gator feeds
 List all feeds in the database.
 
 ### follow
-```bash 
+```bash
 gator follow <url>
 ```
 Follow an existing feed as the current user.
@@ -131,13 +131,13 @@ gator unfollow <url>
 Unfollow a feed as the current user.
 
 ### browse
-```bash 
+```bash
 gator browse [limit]
 ```
 Show the most recent posts from followed feeds (default limit: 2).
 
 ### reset
-```bash 
+```bash
 gator reset
 ```
 Delete all data from the database.
